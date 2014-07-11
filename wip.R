@@ -8,19 +8,19 @@ data <- read.csv("activity.csv",
                  nrows=17568+1)
 
 ## transform interval column in hh:mm time
-require("stringr")
-x <- paste("000",as.character(data$interval),sep="")
-x <- paste(str_sub(x,start=-4L,end=-3L), ":", str_sub(x,start=-2L), ":00", sep="")
-
-## convert date to date format in new column
-data$DateTime <- strptime(paste(data$date, x), "%F %T")
+# require("stringr")
+# x <- paste("000",as.character(data$interval),sep="")
+# x <- paste(str_sub(x,start=-4L,end=-3L), ":", str_sub(x,start=-2L), ":00", sep="")
+# 
+# ## convert date to date format in new column
+# data$DateTime <- strptime(paste(data$date, x), "%F %T")
 ## DONE: DATA LOADING AND PREPARATION 
 
 ################## What is mean total number of steps taken per day?
 # For this part of the assignment, you can ignore the missing values in the dataset.
 print("Studying steps per day...")
-tmp<-data[!is.na(data$steps),]
-steps.per.day<-tapply(tmp$steps,tmp$date,FUN=sum)
+data.noNA<-data[!is.na(data$steps),]
+steps.per.day<-tapply(data.noNA$steps,data.noNA$date,FUN=sum)
 
 # Make a histogram of the total number of steps taken each day
 hist(x=steps.per.day,
@@ -52,7 +52,7 @@ dev.off()                          ## Don't forget to close the PNG device!
 print("Studying steps per interval...")
 
 ## compute values (average per interval)
-steps.per.interval<-tapply(tmp$steps,tmp$interval,FUN=mean)  
+steps.per.interval<-tapply(data.noNA$steps,data.noNA$interval,FUN=mean)  
 ## draw main plot
 plot(x=dimnames(steps.per.interval)[[1]],                    
      y=steps.per.interval,
@@ -89,7 +89,7 @@ dev.off()                          ## Don't forget to close the PNG device!
 print(paste("Number of rows with NA steps:",sum(is.na(data$steps))))
 
 data.completed <- data
-data.completed[is.na(data.completed$steps),]$steps <- steps.per.day[data.completed[is.na(data.completed$steps),]$date]
+merge(data.completed[is.na(data.completed$steps),], steps.per.day, by.x="date", by.y=1)
 
 ################################################################
 # ## Plot 1
