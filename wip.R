@@ -7,8 +7,10 @@ data <- read.csv("activity.csv",
                  stringsAsFactors = FALSE,
                  nrows=17568+1)
 
+require("stringr") ## required for str_sub function
+
 ## transform interval column in hh:mm time
-# require("stringr")
+
 # x <- paste("000",as.character(data$interval),sep="")
 # x <- paste(str_sub(x,start=-4L,end=-3L), ":", str_sub(x,start=-2L), ":00", sep="")
 # 
@@ -88,9 +90,10 @@ dev.off()                          ## Don't forget to close the PNG device!
 ## Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 print(paste("Number of rows with NA steps:",sum(is.na(data$steps))))
 
+steps.per.day <- cbind(names(steps.per.day),steps.per.day)
+names(steps.per.day) <- c("date", "steps")
 data.completed <- data
-merge(data.completed[is.na(data.completed$steps),], steps.per.day, by.x="date", by.y=1)
-
+data.completed[is.na(data.completed$steps),"steps"] <- steps.per.day["date"==data.completed$date,]$steps
 ################################################################
 # ## Plot 1
 # ## draw histogram with color and labels
