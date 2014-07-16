@@ -131,7 +131,7 @@ paste("Mean: ", mean(steps.per.day.completed))
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-Here we prepare a new "steps per interval" variable by adding weekend/weekday values to the series. **Data are normalised against the average of the weekend/weekday values.**
+Here we prepare a new "steps per interval" variable by adding weekend/weekday values to the series. 
 ````{r} 
 day <- weekdays(strptime(data.completed$date, "%Y-%m-%d"))
 data.completed$weekday <- factor(!(day %in% c("Saturday", "Sunday")))
@@ -141,12 +141,12 @@ steps.per.interval<-tapply(data.completed$steps,
                            list(data.completed$interval,data.completed$weekday),
                            FUN=mean)
 
-# normalisation of data
-steps.per.interval<-(steps.per.interval-colMeans(steps.per.interval))/colMeans(steps.per.interval)
+# normalisation of data // this is a variant to display against the average but i find the result less straightforward
+# steps.per.interval<-(steps.per.interval-colMeans(steps.per.interval))/colMeans(steps.per.interval)
 
 ````
 
-Now, we draw the plot using the lattice plotting system. Dotted lines are drawn at 0 which corresponds to the mean value of each series.
+Now, we draw the plot using the lattice plotting system. Dotted lines correspond to the mean value of each series.
 
 ````{r} 
 # prepare the tmp variable for xyplot display
@@ -160,6 +160,6 @@ xyplot(steps ~ interval | weekday, data = tmp,
        ylab="Number of steps",
        panel = function(x, y, ...) {
                 panel.xyplot(x, y,...) ## First call the default panel function for 'xyplot'
-                panel.abline(h = 0, lty =2) ## Add a horizontal line at the avg value
+                panel.abline(h = mean(y), lty =2) ## Add a horizontal line at the avg value
                 })
 ````
